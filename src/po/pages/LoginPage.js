@@ -1,40 +1,35 @@
-import { BasePage } from "../BasePage";
+import { BasePage } from "./BasePage";
 
-class LoginPage extends BasePage {
+export class LoginPage extends BasePage {
+  constructor(page) {
+    super(page);
+  }
 
-    constructor(page) {
-        super(page);
+  get email() {
+    return this.page.locator("#username");
+  }
+  get password() {
+    return this.page.locator("#password");
+  }
+  get loginBtn() {
+    return this.page.locator('button[name="login"]');
+  }
 
-    }
-    get emailInput() {
+  get errorMessage() {
+    return this.page
+      .getByRole("alert")
+      .or(this.page.locator(".error, .alert-danger"));
+  }
 
-        return this.page.locator('//input[#id="username"]');
+  async open() {
+    await this.goto('/mano-paskyra/');
+    await this.email.waitFor()
+  }
 
-    }
-
-    get passwordInput() {
-
-        return this.page.locator('//input[#id="password"]');
-
-    }
-
-    get loginButton() {
-
-        return this.page.locator('//button[name="login"]');
-
-    }
-    async goto() {
-
-        await super.goto('/account/login');
-
-    }
-
-    async login(email, password) {
-    await this.emailInput.fill(email);
-    await this.passwordInput.fill(password);
-    await this.loginButton.click();
-    await this.page.waitForURL(/\/account|\/challenge/, { timeout: 15000 });
+  async login(email, password) {
+    await this.email.fill(email);
+    await this.password.fill(password);
+    await this.loginBtn.click();
+    
   }
 }
-
-export default  new LoginPage;
